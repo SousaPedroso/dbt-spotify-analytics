@@ -42,8 +42,12 @@ class SpotifyUtil:
         if self.headless:
             session = spotipy.Spotify(
                 auth_manager=SpotifyOAuth(
-                    open_browser=False,
+                    client_id=self.client_id,
+                    client_secret=self.client_secret,
+                    redirect_uri=self.redirect_uri,
+                    username=self.username,
                     scope=scope,
+                    open_browser=False,
                 )
             )
             print("headless mode is ON!")
