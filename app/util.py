@@ -43,6 +43,7 @@ class SpotifyUtil:
             session = spotipy.Spotify(
                 auth_manager=SpotifyOAuth(
                     open_browser=False,
+                    scope=scope,
                 )
             )
             print("headless mode is ON!")
