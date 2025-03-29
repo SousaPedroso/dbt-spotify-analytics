@@ -7,6 +7,7 @@ import numpy as np
 import spotipy
 import spotipy.util as util
 
+from spotipy.oauth2 import SpotifyOAuth
 
 class SpotifyUtil:
     """
@@ -22,13 +23,15 @@ class SpotifyUtil:
     }
 
     def __init__(
-        self, username: str, client_id: str, client_secret: str, redirect_uri: str
+        self, username: str, client_id: str, client_secret: str, redirect_uri: str,
+        headless: bool = True
     ) -> None:
         self.username = username
         self.client_id = client_id
         self.client_secret = client_secret
         self.redirect_uri = redirect_uri
         self.session = ""
+        self.headless = headless
 
     def setup(self, scope: str) -> None:
         """
@@ -36,10 +39,19 @@ class SpotifyUtil:
         """
         print("-- Initializing Spotify connection SETUP")
 
-        token = self.get_token(scope=scope)
-        print("token is ready!")
+        if self.headless:
+            session = spotipy.Spotify(
+                auth_manager=SpotifyOAuth(
+                    open_browser=False,
+                )
+            )
+            print("headless mode is ON!")
+        else:
+            token = self.get_token(scope=scope)
+            print("token is ready!")
 
-        session = spotipy.Spotify(auth=token)
+            session = spotipy.Spotify(auth=token)
+
         self.session = session
         sleep(1)
         print(f"connection and user are ready!")
