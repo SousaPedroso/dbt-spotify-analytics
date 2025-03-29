@@ -40,15 +40,25 @@ class SpotifyUtil:
         print("-- Initializing Spotify connection SETUP")
 
         if self.headless:
+            auth_manager=SpotifyOAuth(
+                client_id=self.client_id,
+                client_secret=self.client_secret,
+                redirect_uri=self.redirect_uri,
+                username=self.username,
+                scope=scope,
+                open_browser=False,
+                cache_path=f"cache-{self.username}",
+            )
+
+            token_info = auth_manager.get_cached_token()
+            if token_info and not auth_manager.is_token_expired(token_info):
+                print("Recovered token from cache")
+            else:
+                print("Token expired, requesting new one")
+                auth_manager.get_access_token(as_dict=False)
+
             session = spotipy.Spotify(
-                auth_manager=SpotifyOAuth(
-                    client_id=self.client_id,
-                    client_secret=self.client_secret,
-                    redirect_uri=self.redirect_uri,
-                    username=self.username,
-                    scope=scope,
-                    open_browser=False,
-                )
+                auth_manager=auth_manager
             )
             print("headless mode is ON!")
         else:
